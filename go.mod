@@ -1,4 +1,4 @@
-module mockif
+module github.com/gren236/mockif
 
 go 1.19
 
