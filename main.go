@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/gren236/mockif/generator"
+	"github.com/gren236/mockif/ifparser"
 	"golang.org/x/tools/imports"
 	"log"
-	"mockif/generator"
-	"mockif/ifparser"
 	"os"
 )
 

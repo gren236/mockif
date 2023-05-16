@@ -2,11 +2,11 @@ package generator
 
 import (
 	"fmt"
+	"github.com/gren236/mockif/ifparser"
 	"go/format"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"log"
-	"mockif/ifparser"
 	"strings"
 )
 
