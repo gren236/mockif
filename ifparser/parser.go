@@ -156,29 +156,33 @@ func parseParams(list []*ast.Field) []Param {
 		}
 
 		// TODO Support function as param
-		switch v := prm.Type.(type) {
-		case *ast.SelectorExpr:
-			parsedParam.Type = fmt.Sprintf("%s.%s", v.X.(*ast.Ident).Name, v.Sel.Name)
-		case *ast.Ident:
-			parsedParam.Type = v.Name
-		case *ast.StarExpr:
-			sel := v.X.(*ast.SelectorExpr)
-			parsedParam.Type = fmt.Sprintf("*%s.%s", sel.X.(*ast.Ident).Name, sel.Sel.Name)
-		case *ast.ArrayType:
-			sel := v.Elt.(*ast.SelectorExpr)
-
-			var l string
-			if lit, ok := v.Len.(*ast.BasicLit); ok {
-				l = lit.Value
-			}
-
-			parsedParam.Type = fmt.Sprintf("[%s]%s.%s", l, sel.X.(*ast.Ident).Name, sel.Sel.Name)
-		}
+		parsedParam.Type = parseType(prm.Type)
 
 		resParams = append(resParams, parsedParam)
 	}
 
 	return resParams
+}
+
+func parseType(expr ast.Expr) string {
+	// TODO Support function as param
+	switch v := expr.(type) {
+	case *ast.SelectorExpr:
+		return fmt.Sprintf("%s.%s", v.X.(*ast.Ident).Name, v.Sel.Name)
+	case *ast.Ident:
+		return v.Name
+	case *ast.StarExpr:
+		return fmt.Sprintf("*%s", parseType(v.X))
+	case *ast.ArrayType:
+		var l string
+		if lit, ok := v.Len.(*ast.BasicLit); ok {
+			l = lit.Value
+		}
+
+		return fmt.Sprintf("[%s]%s", l, parseType(v.Elt))
+	default:
+		return "<unrecognised>"
+	}
 }
 
 func appendImports(allImps map[string]string, imps map[string]string) {
